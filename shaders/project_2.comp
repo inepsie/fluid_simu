@@ -1,0 +1,35 @@
+#version 430
+layout(local_size_x = 32 , local_size_y = 32) in;
+layout (rgba32f, binding = 0) uniform image2D img_output;
+
+uniform sampler2D tex;
+uniform sampler2D tex_div;
+uniform int b;
+uniform int w;
+
+void main(void) {
+ ivec2 coords = ivec2(gl_GlobalInvocationID.xy);
+ ivec2 c = coords;
+ if(coords.x == 0) c.x = 1;
+ if(coords.y == 0) c.y = 1;
+ if(coords.x == (w-1)) c.x = w - 2;
+ if(coords.y == (w-1)) c.y = w - 2;
+
+ vec4 value = vec4((texelFetch(tex_div, coords, 0).x +
+                    texelFetch(tex, coords - ivec2(1, 0), 0).x +
+                    texelFetch(tex, coords + ivec2(1, 0), 0).x +
+                    texelFetch(tex, coords - ivec2(0, 1), 0).x +
+                    texelFetch(tex, coords + ivec2(0, 1), 0).x
+								) / 4.0,
+						0.0, 0.0, 0.0);
+
+ if(bool(b)){
+  if(coords.x == 0) value = vec4(-2.0 * value.x, value.y, value.z, 1.0);
+  if(coords.y == 0) value = vec4(value.x, -2.0 * value.y, value.z, 1.0);
+  if(coords.x == (w-1)) value = vec4(-2.0 * value.x, value.y, value.z, 1.0);
+  if(coords.y == (w-1)) value = vec4(value.x, -2.0 * value.y, value.z, 1.0);
+ }
+
+  imageStore(img_output, coords, value);
+}
+
