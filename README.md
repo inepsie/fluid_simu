@@ -10,7 +10,7 @@ Le projet est en cours de développement, des améliorations sont prévues ainsi
 
 Une soutenance de ce projet est prévue le 7 juin 2023.
 
-Vidéo de démo du programme :
+Vidéos de démo du programme :
 
 
 
